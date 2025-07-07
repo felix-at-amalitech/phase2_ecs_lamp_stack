@@ -1,0 +1,36 @@
+name: php-apache
+type: Load Balanced Web Service
+
+image:
+  build: './lamp_app/Dockerfile'
+  port: 80
+
+http:
+  path: '/'
+  # healthcheck:
+  #   path: '/health.php'
+  #   interval: 10s
+  #   timeout: 5s
+  #   healthy_threshold: 2
+  #   unhealthy_threshold: 3
+
+cpu: 512
+memory: 1024
+count: 2
+
+environments:
+  dev:
+    variables:
+      DB_HOST: fruits-db.czaiaq68azf6.eu-west-1.rds.amazonaws.com
+      DB_NAME: fruits_db
+    secrets:
+      DB_USER: /copilot/ghana-healthy-fruits/dev/secrets/DB_USER
+      DB_PASS: /copilot/ghana-healthy-fruits/dev/secrets/DB_PASSWORD
+
+scaling:
+  min_replicas: 2
+  max_replicas: 4
+  target_cpu: 70
+
+logging:
+  enable_metadata: true
